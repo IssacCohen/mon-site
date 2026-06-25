@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ishak Portfolio</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial,sans-serif;
+        }
+
+        body{
+            background:#111827;
+            color:white;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+
+        .card{
+            text-align:center;
+            background:#1f2937;
+            padding:40px;
+            border-radius:20px;
+            width:500px;
+            box-shadow:0 0 30px rgba(0,255,255,.3);
+        }
+
+        h1{
+            color:#00e5ff;
+            margin-bottom:15px;
+        }
+
+        p{
+            margin-bottom:25px;
+            color:#ddd;
+        }
+
+        button{
+            background:#00e5ff;
+            color:black;
+            border:none;
+            padding:15px 30px;
+            border-radius:10px;
+            cursor:pointer;
+            font-size:18px;
+        }
+
+        button:hover{
+            background:white;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="card">
+
+<h1>Bienvenue chez Ishak</h1>
+
+<p>Ingénieur IT • Développeur Web • Design Intérieur</p>
+
+<button onclick="message()">
+Voir mon Portfolio
+</button>
+
+</div>
+
+<script>
+
+function message(){
+    alert("Bienvenue sur mon futur site 🚀");
+}
+
+</script>
+
+</body>
+</html>
