@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 
-<body data-build="desktop-v6-png">
+<body data-build="mobile-v7-png">
   <div class="noise"></div>
   <div class="cursor-glow" id="cursorGlow"></div>
   <div class="stars" id="stars"></div>
@@ -61,6 +61,10 @@
           <a href="#contact">Contact</a>
         </nav>
 
+        <button class="menu-toggle" id="menuToggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+
         <div class="socials">
           <a href="https://github.com/IssacCohen" target="_blank" rel="noreferrer">GH</a>
           <a href="#contact">in</a>
@@ -68,6 +72,7 @@
         </div>
       </header>
     </div>
+    <div class="menu-backdrop" id="menuBackdrop"></div>
 
     <main>
       <section id="home" class="hero section">
