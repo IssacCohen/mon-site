@@ -135,3 +135,30 @@ if (menuToggle && mobileNav && menuBackdrop) {
     if (event.key === "Escape") closeMobileMenu();
   });
 }
+
+
+// Cinematic intro
+const cinematicIntro = document.getElementById("cinematicIntro");
+const skipIntro = document.getElementById("skipIntro");
+
+function closeCinematicIntro() {
+  if (!cinematicIntro) return;
+  cinematicIntro.classList.add("hidden");
+  cinematicIntro.setAttribute("aria-hidden", "true");
+  sessionStorage.setItem("anidaIntroSeen", "true");
+  setTimeout(() => cinematicIntro.remove(), 900);
+}
+
+if (cinematicIntro) {
+  const alreadySeen = sessionStorage.getItem("anidaIntroSeen") === "true";
+  if (alreadySeen) {
+    cinematicIntro.remove();
+  } else {
+    cinematicIntro.setAttribute("aria-hidden", "false");
+    setTimeout(closeCinematicIntro, 5750);
+  }
+}
+
+if (skipIntro) {
+  skipIntro.addEventListener("click", closeCinematicIntro);
+}
