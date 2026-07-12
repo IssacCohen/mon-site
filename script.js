@@ -59,19 +59,17 @@ const loader = document.getElementById("loader");
     window.addEventListener("scroll", setActive);
     setActive();
 
-    document.querySelectorAll("#cvButton, #cvButton2").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        alert("CV مازال ما تضفش. من بعد نحطو cv.pdf ونربطو هاد الزر.");
-      });
-    });
-
     // V5: image names expected in /image/: profile-photo.jpg, projects-banner.jpg, timeline-banner.jpg, lab-banner.jpg, project-airbnb.jpg, project-bbva.jpg, project-binary.jpg, project-devops.jpg, project-ui.jpg, project-ai.jpg
     const form = document.getElementById("contactForm");
     if (form) {
       form.addEventListener("submit", (e) => {
         e.preventDefault();
-        const mail = "mailto:ouzoumarta@icloud.com?subject=Contact depuis le portfolio Anida&body=Bonjour Anasse,%0D%0A%0D%0AJe vous contacte depuis votre portfolio.";
+        const name = document.getElementById("contact-name")?.value.trim() || "Visiteur";
+        const email = document.getElementById("contact-email")?.value.trim() || "";
+        const subject = document.getElementById("contact-subject")?.value.trim() || "Contact depuis le portfolio Anida";
+        const message = document.getElementById("contact-message")?.value.trim() || "";
+        const body = `Bonjour Anasse,\n\n${message}\n\n— ${name}${email ? ` (${email})` : ""}`;
+        const mail = `mailto:Ouzoumarta@icloud.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         window.location.href = mail;
       });
     }
@@ -142,21 +140,17 @@ const cinematicIntro = document.getElementById("cinematicIntro");
 const skipIntro = document.getElementById("skipIntro");
 
 function closeCinematicIntro() {
-  if (!cinematicIntro) return;
+  if (!cinematicIntro || cinematicIntro.classList.contains("hidden")) return;
   cinematicIntro.classList.add("hidden");
   cinematicIntro.setAttribute("aria-hidden", "true");
-  sessionStorage.setItem("anidaIntroSeen", "true");
   setTimeout(() => cinematicIntro.remove(), 900);
 }
 
 if (cinematicIntro) {
-  const alreadySeen = sessionStorage.getItem("anidaIntroSeen") === "true";
-  if (alreadySeen) {
-    cinematicIntro.remove();
-  } else {
-    cinematicIntro.setAttribute("aria-hidden", "false");
-    setTimeout(closeCinematicIntro, 5750);
-  }
+  cinematicIntro.setAttribute("aria-hidden", "false");
+  document.body.classList.add("intro-playing");
+  setTimeout(() => document.body.classList.remove("intro-playing"), 5750);
+  setTimeout(closeCinematicIntro, 5750);
 }
 
 if (skipIntro) {
