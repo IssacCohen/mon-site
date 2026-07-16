@@ -1,158 +1,129 @@
-const loader = document.getElementById("loader");
-    window.addEventListener("load", () => {
-      setTimeout(() => loader && loader.classList.add("hide"), 650);
-    });
+let introScreen = document.getElementById("introScreen");
+let introSkip = document.getElementById("introSkip");
+const replayIntro = document.getElementById("replayIntro");
+const menuButton = document.getElementById("menuButton");
+const nav = document.getElementById("nav");
+const siteHeader = document.getElementById("siteHeader");
+const petals = document.getElementById("petals");
+const year = document.getElementById("year");
 
-    const cursor = document.getElementById("cursorGlow");
-    document.addEventListener("mousemove", (e) => {
-      if (!cursor) return;
-      cursor.style.left = e.clientX + "px";
-      cursor.style.top = e.clientY + "px";
-    });
+let introTimer;
 
-    const stars = document.getElementById("stars");
-    if (stars) {
-      for (let i = 0; i < 105; i++) {
-        const s = document.createElement("span");
-        s.className = "star";
-        s.style.left = Math.random() * 100 + "%";
-        s.style.top = Math.random() * 100 + "%";
-        s.style.animationDelay = Math.random() * 4 + "s";
-        s.style.animationDuration = 2.4 + Math.random() * 3.2 + "s";
-        stars.appendChild(s);
-      }
-    }
+function hideIntro() {
+  if (!introScreen || introScreen.classList.contains("is-hidden")) return;
+  introScreen.classList.add("is-hidden");
+  introScreen.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("intro-active");
+  window.clearTimeout(introTimer);
+}
 
-    const sakura = document.getElementById("sakura");
-    if (sakura) {
-      for (let i = 0; i < 42; i++) {
-        const p = document.createElement("span");
-        p.className = "petal";
-        p.style.left = Math.random() * 100 + "%";
-        p.style.animationDuration = 8 + Math.random() * 12 + "s";
-        p.style.animationDelay = Math.random() * 10 + "s";
-        p.style.opacity = 0.25 + Math.random() * 0.55;
-        sakura.appendChild(p);
-      }
-    }
+function playIntro() {
+  if (!introScreen) return;
+  const replacement = introScreen.cloneNode(true);
+  introScreen.replaceWith(replacement);
+  introScreen = replacement;
+  introSkip = document.getElementById("introSkip");
+  document.body.classList.add("intro-active");
+  introScreen.classList.remove("is-hidden");
+  introScreen.setAttribute("aria-hidden", "false");
+  introSkip?.addEventListener("click", hideIntro);
+  introTimer = window.setTimeout(hideIntro, 4200);
+}
 
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add("visible");
-      });
-    }, { threshold: 0.12 });
+if (introScreen && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  document.body.classList.add("intro-active");
+  introTimer = window.setTimeout(hideIntro, 4200);
+  introSkip?.addEventListener("click", hideIntro);
+} else {
+  hideIntro();
+}
 
-    document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
+replayIntro?.addEventListener("click", playIntro);
 
-    const links = document.querySelectorAll(".navlinks a");
-    const sections = document.querySelectorAll("main section[id]");
-    function setActive() {
-      let current = "home";
-      sections.forEach(section => {
-        const top = section.offsetTop - 160;
-        if (scrollY >= top) current = section.id;
-      });
-      links.forEach(a => {
-        a.classList.toggle("active", a.getAttribute("href") === "#" + current);
-      });
-    }
-    window.addEventListener("scroll", setActive);
-    setActive();
+function closeMenu() {
+  menuButton?.classList.remove("is-open");
+  nav?.classList.remove("is-open");
+  menuButton?.setAttribute("aria-expanded", "false");
+  menuButton?.setAttribute("aria-label", "Ouvrir le menu");
+}
 
-    // V5: image names expected in /image/: profile-photo.jpg, projects-banner.jpg, timeline-banner.jpg, lab-banner.jpg, project-airbnb.jpg, project-bbva.jpg, project-binary.jpg, project-devops.jpg, project-ui.jpg, project-ai.jpg
-    const form = document.getElementById("contactForm");
-    if (form) {
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const name = document.getElementById("contact-name")?.value.trim() || "Visiteur";
-        const email = document.getElementById("contact-email")?.value.trim() || "";
-        const subject = document.getElementById("contact-subject")?.value.trim() || "Contact depuis le portfolio Anida";
-        const message = document.getElementById("contact-message")?.value.trim() || "";
-        const body = `Bonjour Anasse,\n\n${message}\n\n— ${name}${email ? ` (${email})` : ""}`;
-        const mail = `mailto:Ouzoumarta@icloud.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        window.location.href = mail;
-      });
-    }
-
-// Lightweight project filter visual state.
-document.querySelectorAll(".filter").forEach((filter) => {
-  filter.addEventListener("click", () => {
-    document.querySelectorAll(".filter").forEach((item) => item.classList.remove("active"));
-    filter.classList.add("active");
-  });
+menuButton?.addEventListener("click", () => {
+  const open = nav?.classList.toggle("is-open");
+  menuButton.classList.toggle("is-open", Boolean(open));
+  menuButton.setAttribute("aria-expanded", String(Boolean(open)));
+  menuButton.setAttribute("aria-label", open ? "Fermer le menu" : "Ouvrir le menu");
 });
 
-// Prevent placeholder links from jumping to the top.
-document.querySelectorAll('a[href="#"]').forEach((link) => {
-  link.addEventListener("click", (event) => event.preventDefault());
+nav?.querySelectorAll("a").forEach((link) => {
+  link.addEventListener("click", closeMenu);
 });
 
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeMenu();
+});
 
-// Mobile navigation
-const menuToggle = document.getElementById("menuToggle");
-const menuBackdrop = document.getElementById("menuBackdrop");
-const mobileNav = document.querySelector(".navlinks");
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 820) closeMenu();
+});
 
-function closeMobileMenu() {
-  if (!menuToggle || !mobileNav || !menuBackdrop) return;
-  menuToggle.classList.remove("open");
-  mobileNav.classList.remove("open");
-  menuBackdrop.classList.remove("show");
-  document.body.classList.remove("menu-open");
-  menuToggle.setAttribute("aria-expanded", "false");
-  menuToggle.setAttribute("aria-label", "Ouvrir le menu");
+function updateHeader() {
+  siteHeader?.classList.toggle("is-scrolled", window.scrollY > 40);
 }
 
-function openMobileMenu() {
-  if (!menuToggle || !mobileNav || !menuBackdrop) return;
-  menuToggle.classList.add("open");
-  mobileNav.classList.add("open");
-  menuBackdrop.classList.add("show");
-  document.body.classList.add("menu-open");
-  menuToggle.setAttribute("aria-expanded", "true");
-  menuToggle.setAttribute("aria-label", "Fermer le menu");
-}
+window.addEventListener("scroll", updateHeader, { passive: true });
+updateHeader();
 
-if (menuToggle && mobileNav && menuBackdrop) {
-  menuToggle.addEventListener("click", () => {
-    const isOpen = mobileNav.classList.contains("open");
-    isOpen ? closeMobileMenu() : openMobileMenu();
+const revealObserver = new IntersectionObserver(
+  (entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("is-visible");
+      observer.unobserve(entry.target);
+    });
+  },
+  { threshold: 0.12, rootMargin: "0px 0px -40px" }
+);
+
+document.querySelectorAll(".reveal").forEach((element) => {
+  revealObserver.observe(element);
+});
+
+const sections = [...document.querySelectorAll("main section[id]")];
+const navLinks = [...document.querySelectorAll(".nav a")];
+
+function setActiveSection() {
+  const marker = window.scrollY + 180;
+  let activeId = "";
+
+  sections.forEach((section) => {
+    if (marker >= section.offsetTop) activeId = section.id;
   });
 
-  menuBackdrop.addEventListener("click", closeMobileMenu);
-
-  mobileNav.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", closeMobileMenu);
-  });
-
-  window.addEventListener("resize", () => {
-    if (window.innerWidth > 980) closeMobileMenu();
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closeMobileMenu();
+  navLinks.forEach((link) => {
+    link.classList.toggle("is-active", link.getAttribute("href") === `#${activeId}`);
   });
 }
 
+window.addEventListener("scroll", setActiveSection, { passive: true });
+setActiveSection();
 
-// Cinematic intro
-const cinematicIntro = document.getElementById("cinematicIntro");
-const skipIntro = document.getElementById("skipIntro");
+if (petals && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const fragment = document.createDocumentFragment();
 
-function closeCinematicIntro() {
-  if (!cinematicIntro || cinematicIntro.classList.contains("hidden")) return;
-  cinematicIntro.classList.add("hidden");
-  cinematicIntro.setAttribute("aria-hidden", "true");
-  setTimeout(() => cinematicIntro.remove(), 900);
+  for (let index = 0; index < 18; index += 1) {
+    const petal = document.createElement("span");
+    petal.className = "petal";
+    petal.style.left = `${Math.random() * 100}%`;
+    petal.style.animationDuration = `${10 + Math.random() * 12}s`;
+    petal.style.animationDelay = `${-Math.random() * 18}s`;
+    petal.style.setProperty("--drift", `${-80 + Math.random() * 160}px`);
+    petal.style.opacity = String(0.14 + Math.random() * 0.28);
+    fragment.appendChild(petal);
+  }
+
+  petals.appendChild(fragment);
 }
 
-if (cinematicIntro) {
-  cinematicIntro.setAttribute("aria-hidden", "false");
-  document.body.classList.add("intro-playing");
-  setTimeout(() => document.body.classList.remove("intro-playing"), 5750);
-  setTimeout(closeCinematicIntro, 5750);
-}
-
-if (skipIntro) {
-  skipIntro.addEventListener("click", closeCinematicIntro);
+if (year) {
+  year.textContent = String(new Date().getFullYear());
 }
